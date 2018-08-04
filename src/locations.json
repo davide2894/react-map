@@ -1,0 +1,32 @@
+[
+    {
+        "id": 0,
+        "title": "Piazza Maggiore",
+        "position": { "lat": 44.493877, "lng": 11.343354 },
+        "venueId": "4be6aa6f78e8952120c664ce"
+    },
+    {
+        "id": "1",
+        "title": "Two Towers",
+        "position": { "lat": 44.494408, "lng": 11.346731 },
+        "venueId": "4bc8ec5c0687ef3bb3eed8cc"
+    },
+    {
+        "id": "2",
+        "title": "Central Station",
+        "position": { "lat": 44.506219, "lng": 11.343166 },
+        "venueId": "4b646cf4f964a52025b22ae3"
+    },
+    {
+        "id": "3",
+        "title": "Zanhotel Tre Vecchi",
+        "position": { "lat": 44.499770, "lng": 11.344429 },
+        "venueId": "4dcc779dd4c0b5ba5e4a3d91"
+    },
+    {
+        "id": "4",
+        "title": "Osteria dell'Orsa",
+        "position": { "lat": 44.497284, "lng": 11.347979 },
+        "venueId": "4bb10d87f964a52029763ce3"
+    }
+]
