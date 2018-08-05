@@ -62,39 +62,58 @@ body,
 .App {
 	height: 100%;
 	width: 100%;
+	font-family: sans-serif, serif;
 }
 	
-.InfoWindowContainer {
-	width: 300px;
-	position: absolute;
-	right: 0;
-	top: 0;
-	height: 200px;
-	background: #fff;
-}
-
-.locationTitle {
-	font-size: 2em;
-	font-size: 1.5em;
-}
-
-.locationFilter {
-    width: 200px;
-}
-
 #googleMap {
 	z-index: 0;
 }
 
-.locationList {
-    z-index: 2;
-    background: #fff;
+
+.InfoWindowContainer {
+	display: flex;
+	flex-direction: column;
+	z-index: 2;
+	margin-left: auto;
+	margin-right: auto;
+	justify-content: center;
 	position: fixed;
+	bottom: 10%;
+	left: 0;
+	z-index: 5;
+	width: 200px;
+	overflow: auto;
+	background: #fff;
+	padding: 0.5em;
+	border-radius: 6px;
+}
+
+.InfoWindowContainer h2 {
+	font-weight: 600;
+}
+
+.locationTitle {
+	font-size: 16px;
+}
+
+.listViewContainer {
+	max-width: 300px;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background: #fff;
+	z-index: 2;
+}
+
+.locationList {
     width: 150px;
     list-style-type: none;
     z-index: 2;
     padding: 1em;
-    margin-top: 0;
+	margin-top: 0;
+	z-index: 2;
+	background: #fff;
+	position: fixed;
 } 
 
 .locationList > li {
@@ -106,13 +125,72 @@ body,
     cursor: pointer;
 }
 
-
-.locationTitle {
-    font-size: 2em;
-    font-weight: bold;
-}
-
 .locationInfo {
-    margin-top: 1.5em;
+    margin-top: 12px;
     font-style: italic;
+} 
+
+.locationList > li {
+	margin: 1em auto;
 }
+
+.locationList > li:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+/*
+	HAMBURGER MENU STYLE
+	* Component created by https://github.com/negomi/react-burger-menu
+	* See also https://www.npmjs.com/package/react-burger-menu
+*/
+
+.bm-burger-button {
+	position: fixed;
+	width: 36px;
+	height: 30px;
+	left: 36px;
+	top: 36px;
+}
+  
+.bm-burger-bars {
+	background: #373a47;
+}
+
+.bm-cross-button {
+	height: 24px;
+	width: 24px;
+}
+
+.bm-cross {
+	background: #bdc3c7;
+}
+
+.bm-menu {
+	background: #373a47;
+	padding: 2.5em 1.5em 0;
+	font-size: 1.15em;
+}
+
+.bm-morph-shape {
+	fill: #373a47;
+}
+
+.bm-item-list {
+	padding: 0.8em;
+}
+
+.bm-item {
+	display: inline-block;
+}
+
+.bm-overlay {
+	background: rgba(0, 0, 0, 0.3);
+}
+
+@media (min-width: 600px){
+	.InfoWindowContainer {
+		position: fixed;
+		bottom: 30%;
+	}
+} 

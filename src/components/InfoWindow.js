@@ -10,8 +10,8 @@ class InfoWindow extends Component{
             >
 
                 <h2 className="locationTitle">{this.props.currentMarker.title}</h2>
-                <blockquote className="locationInfo"><i>Rating provided by <a href="https://foursquare.com/">Foursquare</a></i>: {this.props.currentLocationInfo}</blockquote>
-
+                <blockquote className="locationRating"><i>Rating provided by <a href="https://foursquare.com/">Foursquare</a></i>: {this.props.currentLocationRating}</blockquote>
+                <p className="locationDescription"><i>Description</i>: {this.props.currentLocationDescription}</p>
             </div>
         )
     }

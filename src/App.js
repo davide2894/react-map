@@ -3,16 +3,23 @@ import './App.css';
 import * as locations from "./locations.json";
 import ListView from './components/ListView';
 import InfoWindow from './components/InfoWindow';
+import { slide as Menu } from 'react-burger-menu';
 
 class App extends Component {
 
   state = {
+    currentLocationDescription: "",
+    currentLocationRating: "",
     isinfoWindowOpen: false,
-    currentLocationInfo: '',
     locations: locations,
     currentMarker: {},
     markers: [],
-    googleMap: "",
+    googleMap: ""
+  }
+
+  componentDidMount(){
+    window.initMap = this.initMap;
+    this.loadMap();  
   }
 
   initMap = () => {
@@ -32,7 +39,6 @@ class App extends Component {
         position: location.position,
         title: location.title,
         id: location.venueId,
-        animation: window.google.maps.Animation.DROP
       });
   
       this.state.markers.push(marker);
@@ -48,6 +54,19 @@ class App extends Component {
     map.addListener('click', ()=>{
       referToThis.closeInfoWindow();
     })
+  }
+
+  loadMap = () => {
+    let reference = window.document.getElementsByTagName('script')[0];
+    let script = window.document.createElement('script');
+    
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCUXBzFr_nKA31GsOSxyGPiGV2ct6fgcR0&callback=initMap';
+    script.async = true;
+    reference.parentNode.insertBefore(script, reference);
+  
+    script.onerror = function () {
+      document.write("Sorry, Google Maps didn't load...");
+    };
   }
 
   openInfoWindow = (marker) => {
@@ -66,9 +85,6 @@ class App extends Component {
   }
 
   getFourSquareInfo = (marker) => {
-
-    console.log(marker);
-    console.log('clickedMarkerID', marker.id);
     
     const endpoint = 'https://api.foursquare.com/v2/venues/';
 
@@ -78,62 +94,58 @@ class App extends Component {
 		  v:"20180323"
     };
     
-	
 		fetch(`${endpoint}${marker.id}?client_id=${params.client_id}&client_secret=${params.client_secret}&v=${params.v}`, {
 			method: 'GET'
 		})
 		.then(res => {
-			if(res.ok){
+      console.log('res',res);
+      if(res.ok){
 				return res.json();
 			} else {
-				alert("Sorry, can't get information from Foursquare...");
 				throw new Error("Sorry, can't get information from Foursquare...");			
 			}
 		})
 		.then(resp => {
-      console.log(resp)
-			this.setState({currentLocationInfo: resp.response.venue.rating})
+      console.log(resp);
+			this.setState({
+        currentLocationRating: resp.response.venue.rating,
+        currentLocationDescription: resp.response.venue.description
+      })
 		})
 		.catch((error) => {
-			console.log(error);
+			alert(error);
 		})
-  }
-
-
-  loadMap = () => {
-    let reference = window.document.getElementsByTagName('script')[0];
-    let script = window.document.createElement('script');
-    
-    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCUXBzFr_nKA31GsOSxyGPiGV2ct6fgcR0&callback=initMap';
-    script.async = true;
-    reference.parentNode.insertBefore(script, reference);
-  
-    script.onerror = function () {
-      document.write("Sorry, Google Maps didn't load...");
-    };
-  }
-
-  componentDidMount(){
-    window.initMap = this.initMap;
-    this.loadMap();  
   }
 
   render() {
+    
     return (
       <div className="App">
-
-        <ListView
-          locations={this.state.locations}
-          markers={this.state.markers}
-          openInfoWindow={this.openInfoWindow}
-        />
-        {
-          this.state.isInfoWindowOpen &&
-          <InfoWindow
-            currentMarker={this.state.currentMarker}
-            currentLocationInfo={this.state.currentLocationInfo}
+        <Menu  
+          tabIndex={0}
+          role="Menu"
+          className=" "
+          width={280}
+          noOverlay
+          disableOverlayClick
+          onClick={this.menuIsClicked}
+          ref={(input) => { this.nameInput = input; }} 
+          isOpen={true}
+         >
+          <ListView
+            locations={this.state.locations}
+            markers={this.state.markers}
+            openInfoWindow={this.openInfoWindow}
           />
-        }   
+          {
+            this.state.isInfoWindowOpen &&
+            <InfoWindow
+              currentMarker={this.state.currentMarker}
+              currentLocationRating={this.state.currentLocationRating}
+              currentLocationDescription={this.state.currentLocationDescription}
+            />
+          }   
+        </Menu>
         <div id="googleMap" role="application">
         </div>
       </div>

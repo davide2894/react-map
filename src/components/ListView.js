@@ -5,7 +5,7 @@ import * as locations from "../locations.json";
 class ListView extends Component {
 
     state = {
-        query: '',
+        query: "",
         filteredLocations: locations,
         filteredMarkers: [],
         currentMarker: {}
@@ -16,49 +16,116 @@ class ListView extends Component {
     }
 
     locationInListIsClicked = (location) => {
-        let controlledThis = this;
+
+        let referToThis = this; 
+
+        this.animateMarker(location);
+
+        this.removeMarkerAnimations();
+
+        setTimeout(()=>{
+            this.removeMarkerAnimations();
+        },500)
 
         this.getCurrentMarker(location);
-       
-        setTimeout(function(){controlledThis.props.openInfoWindow(controlledThis.state.currentMarker)
-        }, 0.5);
+        
+        setTimeout(function(){
+            referToThis.props.openInfoWindow(referToThis.state.currentMarker)
+        }, 500);
+
     }
 
     getCurrentMarker = (location) => {
-        this.state.filteredMarkers.filter(marker => {
-            marker.id === location.id && this.setState({currentMarker: marker})
-        });
+        this.state.filteredMarkers.map(marker =>
+            marker.id === location.venueId 
+                && this.setState({currentMarker: marker})
+        );
     }
 
+    updateFilteredLocations = (query) => {
+
+        let referToThis = this;
+
+        this.setState({query: query});
+    
+        if(query){
+    
+            const match = new RegExp(escapeRegExp(query), 'i');
+    
+            let locationsToDisplay = this.props.locations.filter(location => 
+                match.test(location.title)
+            );
+            
+            this.setState({filteredLocations: locationsToDisplay});
+
+            let markersToDisplay = this.props.markers.filter(marker => 
+                match.test(marker.title)
+            );
+            this.setState({filteredMarkers: markersToDisplay});
+        
+        } else {
+
+            this.setState({
+                filteredLocations: this.props.locations,
+                filteredMarkers: this.props.markers
+            })
+        }
+
+        this.props.markers.map(marker=>marker.setVisible(false));
+        
+        setTimeout(function(){
+            referToThis.props.markers.map(marker=>
+                referToThis.makeMarkersVisible(marker)
+            )
+        },500)
+    }
+
+    animateMarker = (location) => {
+        
+        // Animate marker corresponding to clicked location item
+        this.state.filteredMarkers.map(marker=>
+            marker.id === location.venueId &&
+            marker.setAnimation(window.google.maps.Animation.BOUNCE)
+        )        
+    }
+
+    removeMarkerAnimations = () => {
+        this.state.filteredMarkers.map(marker=>
+            marker.setAnimation(null)
+        )
+    }
+
+    makeMarkersVisible = (marker) => {
+        this.state.filteredMarkers.map(filteredMarker=>
+            filteredMarker.id === marker.id && filteredMarker.setVisible(true)
+        )
+    }
+    
     render(){
-        const { query } = this.state;
-        const { locations } = this.props;
-                
+
+        const {query} = this.state;
+
         return(     
-            <div className='listViewContainer'>
-                <div className='query'>{query}</div>
+            <section className='listViewContainer'>
                 <form
-                    role="searchbox"
                     className='locationFilter'
                     onSubmit={(event)=>event.preventDefault()}
                     >
                     <input
-                        ref={(input) => { this.nameInput = input; }} 
                         aria-labelledby="filter"
                         type="text"
                         placeholder="Look for a location"
                         value={query}
                         onChange={(event) => 
-                            this.updateQuery(event.target.value
-                            )
+                            this.updateFilteredLocations(event.target.value)
                         }
                     />
                 </form>
                 <ul 
                     className="locationList"
                 >
-                {locations.map(location =>
-                    <li 
+                {this.state.filteredLocations.map(location =>
+                        <li 
                         key={location.id}
                         onClick={ () => this.locationInListIsClicked(location) }
                         onKeyPress={ () => this.locationInListIsClicked(location) }
@@ -68,10 +135,9 @@ class ListView extends Component {
                         {location.title}
 
 					</li>
-                    
 				)}  
                 </ul>
-            </div>
+            </section>
         )   
     }
 }
